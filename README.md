@@ -20,6 +20,15 @@ npm run build      # 타입체크 + 프로덕션 빌드
 
 포트를 3000으로 고정한 이유: Supabase Auth의 기본 Site URL이 `http://localhost:3000` 이라 가입 인증 메일의 링크가 앱으로 돌아옵니다.
 
+## 배포 (GitHub Pages)
+
+- 사이트: https://shain1912.github.io/pokemarket/
+- `main` 에 푸시하면 `.github/workflows/deploy.yml` 이 빌드 → Pages 배포까지 자동으로 합니다. 수동 실행은 `gh workflow run deploy.yml`, 진행 확인은 `gh run watch`.
+- Supabase URL / publishable key 는 저장소 **Variables**(`gh variable list`)에서 빌드 시 주입됩니다. `.env` 는 커밋하지 않습니다.
+- 하위 경로(`/pokemarket/`) 대응: 빌드 시 `--base=/<repo>/`, 라우터 `basename={import.meta.env.BASE_URL}`, 그리고 `404.html` = `index.html` 복사본으로 SPA 딥링크를 살립니다(딥링크의 HTTP 상태는 404로 찍히지만 앱은 정상 렌더링).
+- Windows Git Bash 에서 같은 빌드를 재현하려면 경로 변환을 꺼야 합니다: `MSYS_NO_PATHCONV=1 npm run build -- --base=/pokemarket/`
+- **배포 사이트에서 이메일 가입을 쓰려면** Supabase 대시보드 Authentication → URL Configuration 의 Site URL / Redirect URLs 에 `https://shain1912.github.io/pokemarket/` 를 추가해야 인증 메일 링크가 배포 사이트로 돌아옵니다.
+
 ## 구조
 
 ```
